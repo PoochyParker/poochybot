@@ -4,8 +4,7 @@
 import discord, random
 import database_manager as dm, emotes_manager as em, coins_manager as cm, userdata_manager as um
 
-req_coins_one_thru_four = 5 #number of coins required to make a pull
-req_coins_five_plus = 4 #number of coins required to make a six-pull
+coins_per = 5 #number of coins required to make a pull
 
 cr = 60  #common rarity
 sr = 15  #super rarity
@@ -16,7 +15,7 @@ spr = 6   #spotlight rarity
 
 rar_table = [cr,sr,sra,ur,ura,spr]
 
-#RARITY GUIDE: 1 - Common, 2 - Super, 3 - Super (Animated), 4 - Ultra, 5 - Ultra (Animated), 6 - Spotlight
+#RARITY GUIDE: 1 - Common, 2 - Super, 3 - Super (Animated), 4 - Ultra, 5 - Ultra (Animated), 6 - Spotlight, 7 - Unique
 
 def get_rars():
     return rar_table
@@ -36,31 +35,26 @@ def decide_rarity():
     else:
         return(6)
 
-def pull(message, calling_name, client, num):
-    user_data = dm.search_user(message.author.id)
-    multi = 1.0
-    
-    #if(num >= 5):
-    #    req_coins = int(req_coins_five_plus * num * multi)
-    #else:
-    req_coins = req_coins_one_thru_four * num
-    if(user_data[3] < req_coins):
-        return('Terribly sorry,' + calling_name + '... You need **' + str(req_coins) + ' Blue Coins <:bluecoin:711090808148721694>** in order to make a pull, while you only have **' + str(user_data[3]) + ' Blue Coins <:bluecoin:711090808148721694>**. If you have not yet already, trying using `p!daily` for some coins!')
+def pull(user_id, bot, num):
+    user = dm.search_user(user_id)
+    req_coins = coins_per * num
+    if(user[2] < req_coins):
+        return('{{ping}} Terribly sorry, {{petname}}... You need **{{req}} Blue Coins <:bluecoin:711090808148721694>** in order to make a pull, while you only have **{have} Blue Coins <:bluecoin:711090808148721694>**. If you have not yet already, trying using `p!daily` for some coins!'.format(req = str(req_coins), have = str(user[2])))
     else:
-        new_coins = user_data[3] - req_coins
-        dm.update_value(user_data[0],'coins',new_coins)
-        returnage = ('Congratulations,' + calling_name + '! Here are the results of your ' + str(num) + '-pull! \n')
+        new_coins = user[2] - req_coins
+        dm.update_value(user[0],'coins',new_coins)
+        returnage = '{{ping}} Congratulations, {{petname}}! Here are the results of your {pull_num}-pull! \n'.format(pull_num = num)
         for x in range(num):
             pulled_emote = choose_emote()
             if (pulled_emote[3] == 6):
-                dm.update_value(message.author.id,'num_spotlights',dm.search_user(message.author.id)[6] + 1)
-            if(um.check_for_emote(message.author.id,pulled_emote[1])):
-                um.lvl_up_emote(message.author.id,pulled_emote[1])
-                returnage += ('**' + pulled_emote[2] + '** ' +  em.id_to_emote(pulled_emote[1],client) + ' [Rarity: **' + em.get_emote_rar(pulled_emote[3]) + '**] [**Level ' + str(dm.find_one_emote(message.author.id,pulled_emote[1])[1]) + '**]\n')
+                dm.update_value(user_id,'num_spotlights',user[4] + 1)
+            if(um.check_for_emote(user_id,pulled_emote[1])):
+                um.lvl_up_emote(user_id,pulled_emote[1])
+                returnage += '• **{emote_name}** {emote} [Rarity: **{rarity}**] [**Level {level}**]\n'.format(emote_name = pulled_emote[2], emote = str(em.id_to_emote(pulled_emote[1],bot)), rarity = em.get_emote_rar(pulled_emote[3]), level = str(dm.find_one_emote(user_id,pulled_emote[1])[1]))
             else:
-                um.add_users_pull(message.author.id,pulled_emote[1])
-                returnage += ('**' + pulled_emote[2] + '** ' +  em.id_to_emote(pulled_emote[1],client) + ' [Rarity: **' + em.get_emote_rar(pulled_emote[3]) + '**] [**NEW**]\n')
-        returnage += ('This pull cost ' + str(req_coins) + ' Blue Coins <:bluecoin:711090808148721694>, so now you have **' + str(new_coins) + ' Blue Coins <:bluecoin:711090808148721694>**!')
+                um.add_users_pull(user_id,pulled_emote[1])
+                returnage += '• **{emote_name}** {emote} [Rarity: **{rarity}**] [**NEW**]\n'.format(emote_name = pulled_emote[2], emote = str(em.id_to_emote(pulled_emote[1],bot)), rarity = em.get_emote_rar(pulled_emote[3]))
+        returnage += 'This pull cost {req} Blue Coins <:bluecoin:711090808148721694>, so now you have **{new} Blue Coins <:bluecoin:711090808148721694>**!'.format(req = str(req_coins),new = str(new_coins))
         return(returnage)
 
 def choose_emote():
