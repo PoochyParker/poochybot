@@ -1,4 +1,4 @@
-#nickname_manager.py
+#NICKNAME_METHODS.PY
 
 import re
 import emotes_manager
