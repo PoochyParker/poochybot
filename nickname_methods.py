@@ -1,6 +1,6 @@
 #NICKNAME_METHODS.PY
 
-import re
+import re, discord
 import emotes_manager
 
 nickname_limit = 32 #char limit on nicknames
