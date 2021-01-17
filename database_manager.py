@@ -7,7 +7,7 @@ from mysql.connector import Error
 
 def run_database():
     with open('token.dat', 'r') as token:
-	    token = token.readline()
+        token = token.readline()
     return create_connection("localhost", "root", token, "poochy_bot")
 
 
@@ -92,6 +92,12 @@ def print_database(database):
     myresult = cursor.fetchall()
     for x in myresult:
         print(x)
+
+def pull_database(name):
+    sql = 'SELECT * FROM %s'
+    val = name
+    cursor.execute(sql,val)
+    return cursor.fetchall()
 
 #------------------USER FUNCTIONS-----------------#
 #ARRAY: [user_id, petname, referby, coins, last_daily, att_emote, num_spotlights]

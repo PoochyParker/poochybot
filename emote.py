@@ -62,11 +62,11 @@ def return_all_emotes(bot): #MOVE
     return(embed)
 
 class Emote:
-    def __init__(self, id, name, rarity, isInPool):
+    def __init__(self, id, name, rarity, isSpotlight, isInPool):
         self. id = id #Primary signifier  #int
         self.name = name                  #string
         self.rarity = rarity              #int
-        self.isSpotlight = False          #bool
+        self.isSpotlight = isSpotlight    #bool
         self.isInPool = isInPool          #bool
 
     def swap_id(self, new_id):

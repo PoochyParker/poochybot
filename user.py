@@ -22,6 +22,7 @@ class User:
     def set_nickname(self, nickname):
         if (nickname_methods.check_badwords(nickname)):
             return False
+
         if (nickname.strip() == ''): 
             nickname = '' #Resets nickname
             return True
