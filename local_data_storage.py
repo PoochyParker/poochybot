@@ -3,7 +3,7 @@
 import database_manager
 import emote as em, user as us
 
-def fillDictionary(type):
+def fill_dict(type): #Database -> dictionary
     dict = {}
     data_list = database_manager.pull_database(type)
 
@@ -18,3 +18,7 @@ def fillDictionary(type):
         for emote in data_list:
             dict[emote[0]] = ea.Earned_Emote() #FLESH OUT
             #put in 4th one here too lol
+    return dict
+
+def save_dict(dict, type): #Dictionary -> database; run once an hour
+    pass

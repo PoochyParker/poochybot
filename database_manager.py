@@ -142,7 +142,7 @@ def search_emotes(param, value): #emote_id, emote_name, rarity
     else:
         return ['','',0]
 
-def get_rare_emotes(rarity):
+def get_rarity(rarity):
     sql = 'SELECT * FROM emotes WHERE rarity = %s ORDER BY emote_name'
     val = (rarity,)
     cursor.execute(sql, val)
